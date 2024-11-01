@@ -1,10 +1,26 @@
 import { DateTime } from "luxon";
-import { HydrateClient } from "~/trpc/server";
+import { db } from "~/server/db";
+import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home() {
+  const posts = await db.query.posts.findMany();
   return (
     <HydrateClient>
       <main className="flex flex-col items-start justify-start gap-2 bg-slate-800 text-white">
+        {JSON.stringify(posts)}
+        <form>
+          <button
+            type="submit"
+            onClick={async () => {
+              "use server";
+              api.post.create({
+                name: "test",
+              });
+            }}
+          >
+            Create Posts
+          </button>
+        </form>
         {new Array(12).fill(0).map((_, i) => {
           const month = DateTime.now()?.set({ month: i + 1 });
           return (
