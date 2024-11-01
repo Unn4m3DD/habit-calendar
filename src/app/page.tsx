@@ -2,6 +2,8 @@ import { DateTime } from "luxon";
 import { db } from "~/server/db";
 import { api, HydrateClient } from "~/trpc/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const posts = await db.query.posts.findMany();
   return (
