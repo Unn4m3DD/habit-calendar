@@ -19,8 +19,7 @@ export default function RootLayout({
       <body>
         <TRPCReactProvider>
           <div className="flex min-h-screen flex-col bg-slate-800 text-white">
-            <nav className="flex w-full border-b p-4"> Some Nav Bar</nav>
-            <div className="flex p-4">{children}</div>
+            {children}
           </div>
         </TRPCReactProvider>
       </body>

@@ -1,52 +1,37 @@
-import { DateTime } from "luxon";
-import { db } from "~/server/db";
-import { api, HydrateClient } from "~/trpc/server";
+import { HydrateClient } from "~/trpc/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const posts = await db.query.posts.findMany();
   return (
     <HydrateClient>
-      <main className="flex flex-col items-start justify-start gap-2 bg-slate-800 text-white">
-        {JSON.stringify(posts)}
-        <form>
+      <main className="flex min-h-screen items-center justify-center bg-slate-800 text-white">
+        <div className="flex max-w-[32rem] flex-col items-center justify-center gap-2">
+          <h1 className="text-4xl font-bold">Habit Calendar</h1>
+          <p className="flex items-center text-2xl text-center">
+            A habit tracking app that helps you keep track of your habits and
+            progress.
+          </p>
+          <h2>Enter your user id</h2>
+          <input
+            type="text"
+            placeholder="Enter your user id"
+            className="w-full rounded-full px-4 py-2 text-black"
+          />
           <button
             type="submit"
-            onClick={async () => {
-              "use server";
-              api.post.create({
-                name: "test",
-              });
-            }}
+            className="rounded-full bg-white/10 px-10 py-3 font-semibold transition hover:bg-white/20"
           >
-            Create Posts
+            Login
           </button>
-        </form>
-        {new Array(12).fill(0).map((_, i) => {
-          const month = DateTime.now()?.set({ month: i + 1 });
-          return (
-            <div className="flex flex-col items-start gap-1" key={i}>
-              <div className="flex flex-col items-center justify-center gap-2">
-                {
-                  month
-                    .toLocaleParts({ month: "long" })
-                    .find((e) => e.type === "month")?.value
-                }
-              </div>
-              <div className="flex flex-row items-center justify-center gap-2">
-                {new Array(month?.endOf("month")?.day).fill(0).map((_, j) => (
-                  <button
-                    key={j}
-                    className="flex h-9 w-9 flex-col items-center justify-center gap-2 rounded-full bg-slate-700 text-sm text-white"
-                  >
-                    {j + 1}
-                  </button>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+          <h2>Or</h2>
+          <button
+            type="submit"
+            className="rounded-full bg-white/10 px-10 py-3 font-semibold transition hover:bg-white/20"
+          >
+            Create a new one
+          </button>
+        </div>
       </main>
     </HydrateClient>
   );
