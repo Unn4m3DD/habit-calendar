@@ -1,11 +1,9 @@
 import { DateTime } from "luxon";
-import { db } from "~/server/db";
-import { ValidateUserId } from "./_components/ValidateUserId";
-import { cn } from "~/lib/utils";
-import { ClientButton } from "~/components/ui/client-button";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
-import { createRandomDayRecord } from "../actions";
+import { db } from "~/server/db";
+import DayButton from "./_components/DayButton";
+import { ValidateUserId } from "./_components/ValidateUserId";
 
 export const dynamic = "force-dynamic";
 export default async function Home({
@@ -59,45 +57,11 @@ export default async function Home({
                         date?.toISODate(),
                     );
                     return (
-                      <ClientButton
+                      <DayButton
                         key={j}
-                        variant="default"
-                        className="relative flex h-9 w-9 text-sm"
-                        onClick={
-                          !currentDay
-                            ? async () => {
-                                "use server";
-                                await createRandomDayRecord(jsDate, userId);
-                              }
-                            : undefined
-                        }
-                      >
-                        {j + 1}
-                        <div
-                          className={cn(
-                            "absolute -left-px -top-px size-2 rounded-full",
-                            {
-                              "bg-green-500": currentDay?.takenSupplements,
-                            },
-                          )}
-                        />
-                        <div
-                          className={cn(
-                            "absolute -bottom-px -right-px size-2 rounded-full",
-                            {
-                              "bg-green-500": currentDay?.trained,
-                            },
-                          )}
-                        />
-                        <div
-                          className={cn(
-                            "absolute -right-px -top-px size-2 rounded-full",
-                            {
-                              "bg-green-500": currentDay?.caloriesCounted,
-                            },
-                          )}
-                        />
-                      </ClientButton>
+                        date={jsDate}
+                        currentDay={currentDay}
+                      />
                     );
                   })}
                 </div>
