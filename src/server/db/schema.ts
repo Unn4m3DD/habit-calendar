@@ -1,13 +1,13 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
-  char,
   index,
   integer,
   pgTableCreator,
   real,
   text,
   timestamp,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -18,7 +18,7 @@ export const days = createTable(
   {
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
     userId: uuid("user_id").notNull(),
-    date: timestamp("date").unique().notNull(),
+    date: timestamp("date").notNull(),
     weight: real("weight").notNull(),
     takenSupplements: boolean("taken_supplements").notNull(),
     trained: boolean("trained").notNull(),
@@ -31,7 +31,8 @@ export const days = createTable(
       () => new Date(),
     ),
   },
-  (example) => ({
-    dateIndex: index("name_idx").on(example.date),
+  (t) => ({
+    dateIndex: index("name_idx").on(t.date),
+    oneDatePerUser: unique("one_date_per_user").on(t.userId, t.date),
   }),
 );

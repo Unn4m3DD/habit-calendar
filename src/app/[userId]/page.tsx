@@ -1,13 +1,13 @@
 import { DateTime } from "luxon";
-import { revalidatePath } from "next/cache";
-import * as uuid from "uuid";
 import { db } from "~/server/db";
-import { days } from "~/server/db/schema";
-import { HydrateClient } from "~/trpc/server";
 import { ValidateUserId } from "./_components/ValidateUserId";
+import { cn } from "~/lib/utils";
+import { ClientButton } from "~/components/ui/client-button";
+import Link from "next/link";
+import { Button } from "~/components/ui/button";
+import { createRandomDayRecord } from "../actions";
 
 export const dynamic = "force-dynamic";
-
 export default async function Home({
   params,
 }: {
@@ -15,19 +15,27 @@ export default async function Home({
 }) {
   const { userId } = await params;
   const myDays = await db.query.days.findMany({
-    where: (fields, { between }) => {
-      return between(
-        fields.date,
-        DateTime.now().startOf("year").toJSDate(),
-        DateTime.now().endOf("year").toJSDate(),
+    where: (fields, { and, between, eq }) => {
+      return and(
+        between(
+          fields.date,
+          DateTime.now().startOf("year").toJSDate(),
+          DateTime.now().endOf("year").toJSDate(),
+        ),
+        eq(fields.userId, userId),
       );
     },
   });
   return (
-    <HydrateClient>
+    <>
       <ValidateUserId userId={userId} />
       <main className="flex min-h-screen flex-col items-center justify-center gap-2 bg-slate-800 p-4 text-white">
-        <div className="flex flex-col min-h-full">
+        <Button asChild>
+          <Link href="/" className="flex text-sm">
+            Logout
+          </Link>
+        </Button>
+        <div className="flex min-h-full flex-col gap-2">
           {new Array(12).fill(0).map((_, i) => {
             const month = DateTime.now()
               .startOf("day")
@@ -45,33 +53,51 @@ export default async function Home({
                   {new Array(month?.endOf("month")?.day).fill(0).map((_, j) => {
                     const date = month?.plus({ day: j });
                     const jsDate = date?.toJSDate();
+                    const currentDay = myDays.find(
+                      (e) =>
+                        DateTime.fromJSDate(e.date).toISODate() ===
+                        date?.toISODate(),
+                    );
                     return (
-                      <button
+                      <ClientButton
                         key={j}
-                        className="flex h-9 w-9 flex-col items-center justify-center gap-2 rounded-full bg-slate-700 text-sm text-white"
-                        onClick={async () => {
-                          "use server";
-                          await db.insert(days).values({
-                            userId: uuid.v4(),
-                            date: jsDate,
-                            weight: 0,
-                            takenSupplements: false,
-                            trained: false,
-                            caloriesCounted: false,
-                            journal: "",
-                          });
-                          revalidatePath("/");
-                        }}
+                        variant="default"
+                        className="relative flex h-9 w-9 text-sm"
+                        onClick={
+                          !currentDay
+                            ? async () => {
+                                "use server";
+                                await createRandomDayRecord(jsDate, userId);
+                              }
+                            : undefined
+                        }
                       >
                         {j + 1}
-                        {
-                          myDays.find(
-                            (e) =>
-                              DateTime.fromJSDate(e.date).toISODate() ===
-                              date?.toISODate(),
-                          )?.id
-                        }
-                      </button>
+                        <div
+                          className={cn(
+                            "absolute -left-px -top-px size-2 rounded-full",
+                            {
+                              "bg-green-500": currentDay?.takenSupplements,
+                            },
+                          )}
+                        />
+                        <div
+                          className={cn(
+                            "absolute -bottom-px -right-px size-2 rounded-full",
+                            {
+                              "bg-green-500": currentDay?.trained,
+                            },
+                          )}
+                        />
+                        <div
+                          className={cn(
+                            "absolute -right-px -top-px size-2 rounded-full",
+                            {
+                              "bg-green-500": currentDay?.caloriesCounted,
+                            },
+                          )}
+                        />
+                      </ClientButton>
                     );
                   })}
                 </div>
@@ -80,6 +106,6 @@ export default async function Home({
           })}
         </div>
       </main>
-    </HydrateClient>
+    </>
   );
 }
