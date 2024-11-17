@@ -74,7 +74,7 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="mx-auto flex w-full max-w-sm flex-col gap-6 py-8">
+          <div className="mx-auto flex w-full max-w-sm flex-col gap-6 py-8 px-6">
             <DrawerHeader>
               <DrawerTitle className="flex flex-row items-center gap-2">
                 {DateTime.fromJSDate(optimisticState.date)?.toLocaleString(
@@ -91,7 +91,7 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
                 /3
               </DrawerDescription>
             </DrawerHeader>
-            <div className="flex w-[32rem] flex-col justify-between gap-2">
+            <div className="flex flex-col justify-between gap-2">
               {(
                 [
                   {
@@ -126,7 +126,7 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
                 );
               })}
             </div>
-            <div className="flex w-[32rem] flex-col justify-between gap-2">
+            <div className="flex flex-col justify-between gap-2">
               <Label>Weight:</Label>
               <Input
                 type="number"
@@ -148,7 +148,7 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
                 }}
               />
             </div>
-            <div className="flex w-[32rem] flex-col justify-between gap-2">
+            <div className="flex flex-col justify-between gap-2">
               <Label>Journal:</Label>
               <Textarea
                 className="h-32"

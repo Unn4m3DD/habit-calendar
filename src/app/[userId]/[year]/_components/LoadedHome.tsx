@@ -24,7 +24,7 @@ export function LoadedHome(
     : DateTime.fromFormat("2022", "yyyy").startOf("year");
   return (
     <main className="flex h-full max-w-fit flex-col items-center justify-center gap-4">
-      <div className="flex w-full flex-row items-center justify-between p-4 pb-0">
+      <div className="flex w-full flex-row items-center justify-between p-4 pb-0 flex-wrap gap-2">
         <div className="flex flex-row items-center justify-center gap-2">
           <Button asChild variant="outline">
             <Link href={`${Number(year) - 1}`} className="flex text-sm">
