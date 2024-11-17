@@ -85,7 +85,7 @@ export default function LoginForm() {
             render={({ field, formState }) => (
               <div
                 className={cn(
-                  "flex flex-col items-center gap-2 transition-opacity duration-200",
+                  "flex flex-col items-center gap-2 transition-opacity duration-200 text-center",
                   {
                     "opacity-0": formState.isValid,
                   },
