@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
 
 import { Toaster } from "sonner";
+import { ThemeProvider } from "./_components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -15,12 +16,23 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
+    <html
+      lang="en"
+      className={`${GeistSans.variable}`}
+      suppressHydrationWarning
+    >
       <body>
-        <div className="flex min-h-screen flex-col bg-slate-800 text-white">
-          {children}
-        </div>
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="flex h-screen flex-col items-center justify-center overflow-hidden">
+            {children}
+          </div>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

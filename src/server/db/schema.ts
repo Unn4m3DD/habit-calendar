@@ -10,6 +10,7 @@ import {
   unique,
   uuid,
 } from "drizzle-orm/pg-core";
+import type { db } from ".";
 
 export const createTable = pgTableCreator((name) => `habit-calendar_${name}`);
 
@@ -19,7 +20,7 @@ export const days = createTable(
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
     userId: uuid("user_id").notNull(),
     date: timestamp("date").notNull(),
-    weight: real("weight").notNull(),
+    weight: real("weight"),
     takenSupplements: boolean("taken_supplements").notNull(),
     trained: boolean("trained").notNull(),
     caloriesCounted: boolean("calories_counted").notNull(),
@@ -32,7 +33,11 @@ export const days = createTable(
     ),
   },
   (t) => ({
-    dateIndex: index("name_idx").on(t.date),
+    dateIndex: index("date_idx").on(t.date),
+    userIdIndex: index("user_id_idx").on(t.userId),
     oneDatePerUser: unique("one_date_per_user").on(t.userId, t.date),
   }),
 );
+export type DayType = NonNullable<
+  Awaited<ReturnType<typeof db.query.days.findFirst>>
+>;

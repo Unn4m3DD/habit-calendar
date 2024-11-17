@@ -1,19 +1,61 @@
 "use server";
 
 import { db } from "~/server/db";
-import { days } from "~/server/db/schema";
+import { days, type DayType } from "~/server/db/schema";
+import { DateTime } from "luxon";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-export const createRandomDayRecord = async (date: Date, userId: string) => {
-  "use server";
-  await db.insert(days).values({
-    userId,
-    date: date,
-    weight: 0,
-    takenSupplements: Math.random() > 0.5,
-    trained: Math.random() > 0.5,
-    caloriesCounted: Math.random() > 0.5,
-    journal: "",
+const getUserRecord = async ({
+  userId,
+  year,
+}: {
+  userId: string;
+  year: string;
+}) => {
+  const startOfYear = DateTime.fromFormat(year, "yyyy").startOf("year");
+  return await db.query.days.findMany({
+    where: (fields, { and, between, eq }) => {
+      return and(
+        eq(fields.userId, userId),
+        between(
+          fields.date,
+          startOfYear.toJSDate(),
+          startOfYear.endOf("year").toJSDate(),
+        ),
+      );
+    },
+    orderBy: (days, { asc }) => asc(days.date),
   });
-  revalidatePath(`/${userId}`);
+};
+export const getOrCreateUserRecord = async ({
+  userId,
+  year,
+}: {
+  userId: string;
+  year: string;
+}) => {
+  const result = await getUserRecord({ userId, year });
+  if (result.length > 0) return result;
+  const startOfYear = DateTime.fromFormat(year, "yyyy").startOf("year");
+  const amountOfDays = startOfYear.daysInYear;
+  await db.insert(days).values(
+    new Array(amountOfDays).fill(0).map((_, i) => ({
+      userId,
+      date: startOfYear.plus({ day: i }).toJSDate(),
+      weight: undefined,
+      takenSupplements: false,
+      trained: false,
+      caloriesCounted: false,
+      journal: "",
+    })),
+  );
+  return await getUserRecord({ userId, year });
+};
+
+export const updateDay = async (day: DayType) => {
+  await db.update(days).set(day).where(eq(days.id, day.id));
+  revalidatePath(
+    `/${day.userId}/${DateTime.fromJSDate(day.date).toFormat("yyyy")}`,
+  );
 };

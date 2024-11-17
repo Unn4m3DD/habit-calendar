@@ -18,12 +18,14 @@ import * as uuid from "uuid";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { cn } from "~/lib/utils";
 import Link from "next/link";
+import { DateTime } from "luxon";
 
 const loginSchema = z.object({
   userId: z.string().uuid("Invalid user id"),
 });
 
 export default function LoginForm() {
+  const currentYear = DateTime.now().year;
   const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -64,7 +66,10 @@ export default function LoginForm() {
               render={({ field, formState }) =>
                 formState.isValid ? (
                   <Button type="submit" asChild>
-                    <Link prefetch={true} href={`/${field.value}`}>
+                    <Link
+                      prefetch={true}
+                      href={`/${field.value}/${currentYear}`}
+                    >
                       Login
                     </Link>
                   </Button>
