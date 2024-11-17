@@ -14,7 +14,7 @@ import {
 import { cn } from "~/lib/utils";
 import { type DayType } from "~/server/db/schema";
 import { Input } from "~/components/ui/input";
-import { useOptimistic, useRef, useTransition } from "react";
+import { useEffect, useOptimistic, useRef, useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
@@ -35,23 +35,27 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
       await updateDay(newDay);
     });
   };
+  
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const date = DateTime.fromJSDate(optimisticState.date);
+  const now = DateTime.now().startOf("day");
+  const isToday = date.year === now.year && date.ordinal === now.ordinal;
+  useEffect(() => {
+    if (isToday) {
+      buttonRef.current?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  }, [isToday]);
+  
   const autoSubmitTimeout = useRef<ReturnType<typeof setTimeout>>();
 
-  const now = DateTime.now().startOf("day");
-  const isToday =
-    DateTime.fromJSDate(optimisticState.date).ordinal === now.ordinal;
   return (
     <>
       <Drawer>
         <DrawerTrigger asChild>
           <Button
-            ref={(ref) => {
-              if (isToday) {
-                ref?.scrollIntoView({
-                  behavior: "smooth",
-                });
-              }
-            }}
+            ref={buttonRef}
             variant={isToday ? "default" : "outline"}
             className="relative flex h-9 w-9 text-sm"
           >
@@ -74,7 +78,7 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="mx-auto flex w-full max-w-sm flex-col gap-6 py-8 px-6">
+          <div className="mx-auto flex w-full max-w-sm flex-col gap-6 px-6 py-8">
             <DrawerHeader>
               <DrawerTitle className="flex flex-row items-center gap-2">
                 {DateTime.fromJSDate(optimisticState.date)?.toLocaleString(
