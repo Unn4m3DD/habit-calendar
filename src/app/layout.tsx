@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 
 import { Toaster } from "sonner";
 import { ThemeProvider } from "./_components/ThemeProvider";
+import Providers from "~/components/ReactQuery";
 
 export const metadata: Metadata = {
   title: "Habit Calendar",
@@ -16,24 +17,26 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${GeistSans.variable}`}
-      suppressHydrationWarning
-    >
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="flex h-screen flex-col items-center justify-center overflow-hidden">
-            {children}
-          </div>
-          <Toaster />
-        </ThemeProvider>
-      </body>
-    </html>
+    <Providers>
+      <html
+        lang="en"
+        className={`${GeistSans.variable}`}
+        suppressHydrationWarning
+      >
+        <body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="flex h-screen flex-col items-center justify-center overflow-hidden">
+              {children}
+            </div>
+            <Toaster />
+          </ThemeProvider>
+        </body>
+      </html>
+    </Providers>
   );
 }

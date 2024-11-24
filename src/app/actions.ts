@@ -2,7 +2,7 @@
 
 import { db } from "~/server/db";
 import { days, type DayType } from "~/server/db/schema";
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -51,6 +51,28 @@ export const getOrCreateUserRecord = async ({
     })),
   );
   return await getUserRecord({ userId, year });
+};
+
+export const getRecordsWithinLast = async ({
+  userId,
+  durationIso,
+}: {
+  userId: string;
+  durationIso: string;
+}) => {
+  const startDate = DateTime.now()
+    .startOf("day")
+    .minus(Duration.fromISO(durationIso));
+  return await db.query.days.findMany({
+    where: (fields, { and, between, eq, isNotNull }) => {
+      return and(
+        eq(fields.userId, userId),
+        between(fields.date, startDate.toJSDate(), DateTime.now().toJSDate()),
+        isNotNull(fields.weight),
+      );
+    },
+    orderBy: (days, { asc }) => asc(days.date),
+  });
 };
 
 export const updateDay = async (day: DayType) => {

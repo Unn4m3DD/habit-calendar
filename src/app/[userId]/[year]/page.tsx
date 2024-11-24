@@ -11,5 +11,5 @@ export default async function Home({
   const { userId, year } = await params;
   const days = await getOrCreateUserRecord({ userId, year });
   const startOfYear = DateTime.fromFormat(year, "yyyy").startOf("year");
-  return <LoadedHome year={year} days={days} startOfYear={startOfYear} />;
+  return <LoadedHome year={year} days={days} startOfYear={startOfYear} userId={userId} />;
 }

@@ -47,7 +47,7 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
       });
     }
   }, [isToday]);
-  
+
   const autoSubmitTimeout = useRef<ReturnType<typeof setTimeout>>();
 
   return (
@@ -61,7 +61,7 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
           >
             {DateTime.fromJSDate(optimisticState.date)?.toFormat("dd")}
             <div
-              className={cn("absolute -left-1 -top-1 size-2 rounded-full", {
+              className={cn("absolute -right-1 top-[50%-.5rem] size-2 rounded-full", {
                 "bg-green-500": optimisticState.takenSupplements,
               })}
             />
