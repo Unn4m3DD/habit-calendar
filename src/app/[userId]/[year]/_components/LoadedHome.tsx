@@ -58,6 +58,7 @@ export function LoadedHome(
           <div className="flex flex-col gap-2 p-4">
             {new Array(12).fill(0).map((_, i) => {
               const month = startOfYear.set({ month: i + 1 });
+              const offset = month.weekday - 1;
               return (
                 <div className="flex flex-col items-start gap-1" key={i}>
                   <div className="flex flex-col items-center justify-center gap-2">
@@ -68,6 +69,16 @@ export function LoadedHome(
                     }
                   </div>
                   <div className="flex flex-row flex-wrap items-center justify-start gap-2">
+                    {new Array(offset).fill(0).map((_, j) => {
+                      return (
+                        <Button
+                          key={-j}
+                          variant="outline"
+                          className="relative flex h-9 w-9 text-sm sm:hidden"
+                          disabled
+                        ></Button>
+                      );
+                    })}
                     {new Array(month?.endOf("month")?.day)
                       .fill(0)
                       .map((_, j) => {
