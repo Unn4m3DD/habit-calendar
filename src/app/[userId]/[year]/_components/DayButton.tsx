@@ -18,8 +18,10 @@ import { useEffect, useOptimistic, useRef, useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function DayButton({ currentDay }: { currentDay: DayType }) {
+  const queryClient = useQueryClient();
   const [isPending, startTransition] = useTransition();
   const [optimisticState, updateOptimistic] = useOptimistic(currentDay);
   const updateDayMutation = <T extends keyof DayType>(
@@ -33,9 +35,12 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
       };
       updateOptimistic(newDay);
       await updateDay(newDay);
+      queryClient.invalidateQueries({
+        queryKey: ["weightGraph"],
+      });
     });
   };
-  
+
   const buttonRef = useRef<HTMLButtonElement>(null);
   const date = DateTime.fromJSDate(optimisticState.date);
   const now = DateTime.now().startOf("day");
@@ -61,9 +66,12 @@ export default function DayButton({ currentDay }: { currentDay: DayType }) {
           >
             {DateTime.fromJSDate(optimisticState.date)?.toFormat("dd")}
             <div
-              className={cn("absolute -right-1 top-[50%-.5rem] size-2 rounded-full", {
-                "bg-green-500": optimisticState.takenSupplements,
-              })}
+              className={cn(
+                "absolute -right-1 top-[50%-.5rem] size-2 rounded-full",
+                {
+                  "bg-green-500": optimisticState.takenSupplements,
+                },
+              )}
             />
             <div
               className={cn("absolute -bottom-1 -right-1 size-2 rounded-full", {

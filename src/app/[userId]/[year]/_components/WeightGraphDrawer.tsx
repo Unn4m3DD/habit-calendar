@@ -45,7 +45,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function WeightGraphDrawer({ userId }: { userId: string }) {
-  const [durationSelect, setDurationSelect] = useState<string>("P30D");
+  const [durationSelect, setDurationSelect] = useState<string>("P1M");
   const duration = Duration.fromISO(durationSelect);
   const [aggregateBy, setAggregateBy] = useState<"day" | "week" | "month">(
     "day",
@@ -53,7 +53,6 @@ export default function WeightGraphDrawer({ userId }: { userId: string }) {
   const { data, isLoading } = useQuery({
     queryKey: ["weightGraph", durationSelect],
     queryFn: async () => {
-      console.log("querying");
       return getRecordsWithinLast({ userId, durationIso: durationSelect });
     },
   });
