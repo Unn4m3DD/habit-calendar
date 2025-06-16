@@ -100,10 +100,11 @@ export default function WeightGraphDrawer({ userId }: { userId: string }) {
                 Duration.fromObject({ weeks: 1 }),
                 Duration.fromObject({ weeks: 2 }),
                 Duration.fromObject({ months: 1 }),
-                Duration.fromObject({ months: 2 }),
                 Duration.fromObject({ months: 3 }),
                 Duration.fromObject({ months: 6 }),
                 Duration.fromObject({ years: 1 }),
+                Duration.fromObject({ years: 2 }),
+                Duration.fromObject({ years: 5 }),
               ].map((e) => (
                 <SelectItem key={e.toHuman()} value={e.toISO()}>
                   {e.toHuman()}
