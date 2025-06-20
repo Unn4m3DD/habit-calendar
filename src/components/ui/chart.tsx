@@ -1,5 +1,6 @@
 "use client";
 
+import { DateTime } from "luxon";
 import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 
@@ -8,13 +9,16 @@ import { cn } from "~/lib/utils";
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const;
 
-export type ChartConfig = Record<string, {
+export type ChartConfig = Record<
+  string,
+  {
     label?: React.ReactNode;
     icon?: React.ComponentType;
   } & (
     | { color?: string; theme?: never }
     | { color?: never; theme: Record<keyof typeof THEMES, string> }
-  )>;
+  )
+>;
 
 type ChartContextProps = {
   config: ChartConfig;
@@ -172,7 +176,6 @@ const ChartTooltipContent = React.forwardRef<
     }
 
     const nestLabel = payload.length === 1 && indicator !== "dot";
-
     return (
       <div
         ref={ref}
@@ -231,8 +234,10 @@ const ChartTooltipContent = React.forwardRef<
                       )}
                     >
                       <div className="grid gap-1.5">
-                        {nestLabel ? tooltipLabel : null}
-                        <span className="text-muted-foreground">
+                        {DateTime.fromMillis(item.payload.day).toLocaleString(
+                          DateTime.DATE_MED,
+                        )}
+                        <span className="text-muted-foreground capitalize">
                           {itemConfig?.label || item.name}
                         </span>
                       </div>
@@ -355,9 +360,10 @@ function getPayloadConfigFromPayload(
 
 export {
   ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
   ChartLegend,
   ChartLegendContent,
   ChartStyle,
+  ChartTooltip,
+  ChartTooltipContent
 };
+

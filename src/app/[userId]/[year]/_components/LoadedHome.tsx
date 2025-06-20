@@ -1,11 +1,11 @@
-import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, LogOut } from "lucide-react";
 import { DateTime } from "luxon";
 import Link from "next/link";
+import { ThemeToggle } from "~/app/_components/ThemeToggle";
 import { Button } from "~/components/ui/button";
+import { ScrollArea } from "~/components/ui/scroll-area";
 import { type DayType } from "~/server/db/schema";
 import DayButton from "./DayButton";
-import { ThemeToggle } from "~/app/_components/ThemeToggle";
-import { ScrollArea } from "~/components/ui/scroll-area";
 import WeightGraphDrawer from "./WeightGraphDrawer";
 
 type LoadedHomeProps = {
@@ -28,7 +28,7 @@ export function LoadedHome(
     <main className="flex h-full max-w-fit flex-col items-center justify-center gap-4">
       <div className="flex w-full flex-row flex-wrap items-center justify-between gap-2 p-4 pb-0">
         <div className="flex flex-row items-center justify-center gap-2">
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" size="icon">
             <Link href={`${Number(year) - 1}`} className="flex text-sm">
               <ArrowLeft className="h-6 w-6" />
             </Link>
@@ -37,7 +37,7 @@ export function LoadedHome(
             {isLoading && <Loader2 className="h-6 w-6 animate-spin" />}
             {!isLoading && year}
           </div>
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" size="icon">
             <Link href={`${Number(year) + 1}`} className="flex text-sm">
               <ArrowRight className="h-6 w-6" />
             </Link>
@@ -46,9 +46,9 @@ export function LoadedHome(
         <div className="flex flex-row items-center gap-2">
           {userId && <WeightGraphDrawer userId={userId} />}
           <ThemeToggle />
-          <Button asChild>
+          <Button asChild size="icon">
             <Link href="/" className="flex text-sm">
-              Logout
+              <LogOut className="h-6 w-6" />
             </Link>
           </Button>
         </div>

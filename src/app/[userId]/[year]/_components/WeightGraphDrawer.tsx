@@ -135,7 +135,7 @@ export default function WeightGraphDrawer({ userId }: { userId: string }) {
             </div>
           )}
           {!isLoading && (
-            <ChartContainer config={chartConfig} className="min-h-[50vh]">
+            <ChartContainer config={chartConfig} className="min-h-[60vh]">
               <LineChart
                 accessibilityLayer
                 data={Object.values(aggregatedDays!)}
